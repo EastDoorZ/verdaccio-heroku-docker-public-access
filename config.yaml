@@ -1,22 +1,74 @@
 storage: ./storage
 auth:
-  github-oauth-ui:
-    org: GITHUB_OAUTH_ORG
+  auth-gitlab:
+    # Gitlab server (default: https://gitlab.com)
+    url: https://gitlab.com
+
+    # Gitlab token type (default: personal)
+    tokenType: personal # options: personal/oauth/job
+
+    # Check gitlab Role
+    role:
+      # Gitlab user role (default: true)
+      # Warning: Set to false will disable all role
+      #          Disable user role will make it impossible to check the relevance between username and token
+      user: true
+
+      # Gitlab group owner role (default: false)
+      # Warning: Set to true will cause performance degradation
+      groupOwner: false
+
+      # Gitlab group member role (default: false)
+      # Warning: Set to true will cause performance degradation
+      groupMember: false
+
+      # Gitlab group minimal access level (default: [])
+      # Warning: Set to non-empty array will cause performance degradation
+      #          Supported by gitlab 11.2
+      groupMinAccessLevel: [] # access level array e.g. [30, 40]
+
+      # Gitlab project owner role (default: false)
+      # Warning: Set to true will cause performance degradation
+      projectOwner: false
+
+      # Gitlab project member role (default: false)
+      # Warning: Set to true will cause performance degradation
+      projectMember: false
+
+      # Gitlab project minimal access level (default: [])
+      # Warning: Set to non-empty array will cause performance degradation
+      #          Supported by gitlab 11.2
+      projectMinAccessLevel: [] # access level array e.g. [30, 40]
+
+    # Cache gitlab user
+    cache:
+      # Max cache count (default: 1000)
+      # Warning: Set to 0 will cause performance degradation
+      maxCount: 1000
+
+      # Max cache second (default: 300)
+      # Warning: Set to 0 will cause performance degradation
+      maxSecond: 300
+
+    # Limit the scope of the all function
+    page:
+      # Number of items to list per page (default: 100)
+      # Warning: The maximum value is 100
+      perPage: 100
+      # Max page number (default: 0)
+      # Warning: Set to 0 will get all data
+      maxPages: 0
 uplinks:
   npmjs:
     url: https://registry.npmjs.org/
 packages:
   '@*/*':
     access: $all
-    publish: $authenticated
+    publish: $gitlab:user
     proxy: npmjs
   '**':
     proxy: npmjs
     access: $all
-    publish: $authenticated
+    publish: $gitlab:user
 logs:
   - {type: stdout, format: pretty, level: http}
-middlewares:
-  github-oauth-ui:
-    client-id: GITHUB_OAUTH_CLIENT_ID
-    client-secret: GITHUB_OAUTH_CLIENT_SECRET
