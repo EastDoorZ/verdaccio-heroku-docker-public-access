@@ -63,12 +63,12 @@ uplinks:
     url: https://registry.npmjs.org/
 packages:
   '@*/*':
-    access: $all
+    access: $gitlab:user
     publish: $gitlab:user
     proxy: npmjs
   '**':
     proxy: npmjs
-    access: $all
+    access: $gitlab:user
     publish: $gitlab:user
 logs:
   - {type: stdout, format: pretty, level: http}
